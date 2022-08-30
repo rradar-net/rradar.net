@@ -15,6 +15,8 @@ var trans ut.Translator
 
 func Register() {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		// Use the names which have been specified for JSON representations of structs, rather than normal Go field names.
+		// eg. "username" instead of "Username"
 		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
 
