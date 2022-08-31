@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  postgres:
+    image: "postgres:latest"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=superuser
+      - POSTGRES_DB=rradar
