@@ -27,11 +27,10 @@ go.work
 ### Go Patch ###
 /vendor/
 /Godeps/
+# End of https://www.toptal.com/developers/gitignore/api/go
 
 # Proto generated files
 /pkg/proto/*.pb.go
 
 # Hot reload (air) files
 tmp
-
-# End of https://www.toptal.com/developers/gitignore/api/go
