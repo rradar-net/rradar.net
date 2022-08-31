@@ -6,3 +6,5 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=superuser
       - POSTGRES_DB=rradar
+    ports:
+      - 5432:5432
