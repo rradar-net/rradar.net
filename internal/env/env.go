@@ -2,10 +2,10 @@ package env
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rradar-net/rradar.net/internal/users"
+	"github.com/rs/zerolog/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -31,13 +31,13 @@ func Init() Env {
 	var privateCfg privateConfig
 	err := envconfig.Process("rradar", &privateCfg)
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Fatal().Msg(err.Error())
 	}
 
 	var cfg config
 	err = envconfig.Process("rradar", &cfg)
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Fatal().Msg(err.Error())
 	}
 
 	dsn := fmt.Sprintf(
@@ -46,7 +46,7 @@ func Init() Env {
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalln("Error connecting to the database")
+		log.Fatal().Msg(err.Error())
 	}
 
 	db.AutoMigrate(&users.User{})
