@@ -33,4 +33,4 @@ go.work
 /pkg/proto/*.pb.go
 
 # Hot reload (air) files
-tmp
+bin
