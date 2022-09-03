@@ -34,3 +34,6 @@ go.work
 
 # Hot reload (air) files
 bin
+
+# macOS
+.DS_Store
