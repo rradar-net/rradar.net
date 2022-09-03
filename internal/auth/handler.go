@@ -19,10 +19,21 @@ func RegisterHandler(env env.Env) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request proto.RegisterRequest
 		if err := c.ShouldBindJSON(&request); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"errors": verrors.Format(err)})
+			c.JSON(http.StatusBadRequest, verrors.Format(err))
 			return
 		}
 
-		c.JSON(http.StatusOK, &request)
+		user, err := registerUser(env, &request)
+		if err != nil {
+			c.JSON(err.HttpStatus, err.JSON())
+			return
+		}
+
+		c.JSON(http.StatusCreated, &proto.RegisterResponse{
+			Status: proto.Status_Success,
+			Data: &proto.RegisterResponse_Data{
+				Username: user.Username,
+			},
+		})
 	}
 }

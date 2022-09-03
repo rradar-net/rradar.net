@@ -3,6 +3,6 @@
     "ts-proto": "^1.123.1"
   },
   "scripts": {
-    "proto": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./proto --proto_path=../pkg/proto $(cd ../pkg/proto && ls -d *.proto)"
+    "proto": "rm -rf proto/*.ts && protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./proto --proto_path=../pkg/proto $(cd ../pkg/proto && ls -d *.proto)"
   }
 }

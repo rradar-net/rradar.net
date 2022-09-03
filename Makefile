@@ -10,5 +10,6 @@ dev: ## Run development server
 	air --build.cmd "go build -o ./bin/rradar" --build.bin "./bin/rradar" --build.exclude_dir "rradar-ui"
 
 proto: ## (Re)generate protobuf files
-	protoc --proto_path=. --go_out=paths=source_relative:. pkg/proto/*.proto
+	rm -rf pkg/proto/*.pb.go
+	protoc --proto_path=./pkg/proto --go_out=paths=source_relative:./pkg/proto $(shell cd pkg/proto && ls -d *.proto)
 	protoc-go-inject-tag -input="pkg/proto/*.pb.go"

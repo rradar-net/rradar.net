@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/kelseyhightower/envconfig"
+	"github.com/rradar-net/rradar.net/internal/users"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -47,6 +48,8 @@ func Init() Env {
 	if err != nil {
 		log.Fatalln("Error connecting to the database")
 	}
+
+	db.AutoMigrate(&users.User{})
 
 	return Env{
 		Db:  db,

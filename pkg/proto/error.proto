@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "status.proto";
+
+package proto;
+option go_package = "/proto";
+
+message ErrorResponse {
+    Status status = 1;
+    optional string message = 2;
+    map<string, string> data = 3;
+}

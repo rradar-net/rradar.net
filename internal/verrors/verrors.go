@@ -1,6 +1,7 @@
 package verrors
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
+	"github.com/rradar-net/rradar.net/pkg/proto"
 )
 
 var trans ut.Translator
@@ -34,11 +36,23 @@ func Register() {
 	}
 }
 
-func Format(err error) []string {
-	ve := err.(validator.ValidationErrors)
-	errs := make([]string, len(ve))
-	for i, e := range ve {
-		errs[i] = e.Translate(trans)
+func Format(err error) proto.ErrorResponse {
+	var ve validator.ValidationErrors
+
+	if !errors.As(err, &ve) {
+		msg := "invalid input"
+		return proto.ErrorResponse{
+			Status:  proto.Status_Error,
+			Message: &msg,
+		}
 	}
-	return errs
+
+	errs := make(map[string]string)
+	for _, e := range err.(validator.ValidationErrors) {
+		errs[e.Field()] = e.Translate(trans)
+	}
+	return proto.ErrorResponse{
+		Status: proto.Status_Fail,
+		Data:   errs,
+	}
 }
