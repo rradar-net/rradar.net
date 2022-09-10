@@ -148,6 +148,11 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Username(); !ok {
 		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "User.username"`)}
 	}
+	if v, ok := uc.mutation.Username(); ok {
+		if err := user.UsernameValidator(v); err != nil {
+			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
+		}
+	}
 	if _, ok := uc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
 	}

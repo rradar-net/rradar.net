@@ -71,12 +71,18 @@ func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(uu.hooks) == 0 {
+		if err = uu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = uu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UserMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uu.check(); err != nil {
+				return 0, err
 			}
 			uu.mutation = mutation
 			affected, err = uu.sqlSave(ctx)
@@ -116,6 +122,16 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 	if err := uu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (uu *UserUpdate) check() error {
+	if v, ok := uu.mutation.Username(); ok {
+		if err := user.UsernameValidator(v); err != nil {
+			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
+		}
+	}
+	return nil
 }
 
 func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -233,12 +249,18 @@ func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
 		node *User
 	)
 	if len(uuo.hooks) == 0 {
+		if err = uuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = uuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UserMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uuo.check(); err != nil {
+				return nil, err
 			}
 			uuo.mutation = mutation
 			node, err = uuo.sqlSave(ctx)
@@ -284,6 +306,16 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	if err := uuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (uuo *UserUpdateOne) check() error {
+	if v, ok := uuo.mutation.Username(); ok {
+		if err := user.UsernameValidator(v); err != nil {
+			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
+		}
+	}
+	return nil
 }
 
 func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
