@@ -1,18 +1,20 @@
 package env
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/kelseyhightower/envconfig"
+	_ "github.com/lib/pq"
+	"github.com/rradar-net/rradar.net/ent"
 	"github.com/rradar-net/rradar.net/internal/users"
 	"github.com/rs/zerolog/log"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 type Env struct {
-	Db  *gorm.DB
-	Cfg config
+	Ctx            context.Context
+	UserRepository users.Repository
+	Cfg            config
 }
 
 type privateConfig struct {
@@ -40,19 +42,22 @@ func Init() Env {
 		log.Fatal().Msg(err.Error())
 	}
 
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Europe/Warsaw",
-		privateCfg.DbHost, privateCfg.DbUser, privateCfg.DbPassword, privateCfg.DbName, privateCfg.DbPort,
-	)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	client, err := ent.Open("postgres",
+		fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
+			privateCfg.DbHost, privateCfg.DbPort, privateCfg.DbUser, privateCfg.DbName, privateCfg.DbPassword))
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		log.Fatal().Msgf("failed opening connection to postgres: %v", err)
 	}
 
-	db.AutoMigrate(&users.User{})
+	ctx := context.Background()
+
+	if err := client.Schema.Create(ctx); err != nil {
+		log.Fatal().Msgf("failed creating schema resources: %v", err)
+	}
 
 	return Env{
-		Db:  db,
-		Cfg: cfg,
+		Ctx:            ctx,
+		UserRepository: users.NewRepository(client),
+		Cfg:            cfg,
 	}
 }

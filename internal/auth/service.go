@@ -8,16 +8,16 @@ import (
 )
 
 func registerUser(env env.Env, request *proto.RegisterRequest) (*users.User, *errors.SentinelError) {
-	user := users.User{
+	user := &users.User{
 		Username: request.Username,
 		Password: request.Password,
 		Email:    proto.OptionalString(request.Email),
 	}
 
-	result := env.Db.Create(&user)
-	if result.Error != nil {
-		return nil, errors.ErrInternalServerError()
+	user, err := env.UserRepository.CreateUser(env.Ctx, *user)
+	if err != nil {
+		return nil, err
 	}
 
-	return &user, nil
+	return user, nil
 }
