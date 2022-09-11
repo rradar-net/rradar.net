@@ -11,8 +11,8 @@ import (
 
 func registerUser(env env.Env, request *proto.RegisterRequest) (*users.User, *errs.SentinelError) {
 	// Check if username is available
-	_, err := env.UserRepository.GetByUsername(env.Ctx, request.Username)
-	if err == nil {
+	available := env.UserRepository.IsUsernameAvailable(env.Ctx, request.Username)
+	if !available {
 		return nil, errs.NewErrUsernameIsNotAvailable(request.Username)
 	}
 

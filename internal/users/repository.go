@@ -10,7 +10,7 @@ import (
 
 type Repository interface {
 	Create(ctx context.Context, user User) (*User, error)
-	GetByUsername(ctx context.Context, username string) (*User, error)
+	IsUsernameAvailable(ctx context.Context, username string) bool
 }
 
 type repository struct {
@@ -36,20 +36,14 @@ func (r repository) Create(ctx context.Context, user User) (*User, error) {
 	return &entity, nil
 }
 
-func (r repository) GetByUsername(ctx context.Context, username string) (*User, error) {
-	u, err := r.client.User.Query().
+func (r repository) IsUsernameAvailable(ctx context.Context, username string) bool {
+	count, err := r.client.User.Query().
 		Where(user.Username(username)).
-		Only(ctx)
+		Count(ctx)
 
 	if err != nil {
-		if _, ok := err.(*ent.NotSingularError); ok {
-			log.Panic().Msgf("Found at least two entries with username %s. Err: %s", username, err.Error())
-		}
-
-		return nil, err
+		log.Panic().Msg(err.Error())
 	}
 
-	entity := toUserEntity(u)
-
-	return &entity, nil
+	return count == 0
 }

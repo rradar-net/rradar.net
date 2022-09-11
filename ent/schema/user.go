@@ -18,7 +18,7 @@ func (User) Fields() []ent.Field {
 			Default(uuid.New),
 		field.String("username").NotEmpty().Unique(),
 		field.String("password"),
-		field.String("email").Optional(),
+		field.String("email").Optional().Unique(),
 	}
 }
 
