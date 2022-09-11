@@ -6,6 +6,8 @@ help: ## Show this help
 dev: ## Run development server
 	docker compose up --build --force-recreate -d
 	./air-install.sh
+	make proto
+	make ent
 	air
 
 proto: ## (Re)generate protobuf files

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rradar-net/rradar.net/internal/env"
-	"github.com/rradar-net/rradar.net/internal/errors"
+	"github.com/rradar-net/rradar.net/internal/errs"
 	"github.com/rradar-net/rradar.net/pkg/proto"
 )
 
@@ -19,7 +19,7 @@ func RegisterHandler(env env.Env) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request proto.RegisterRequest
 		if err := c.ShouldBindJSON(&request); err != nil {
-			c.JSON(http.StatusBadRequest, errors.Format(err))
+			c.JSON(http.StatusBadRequest, errs.Format(err))
 			return
 		}
 
@@ -30,7 +30,7 @@ func RegisterHandler(env env.Env) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusCreated, &proto.RegisterResponse{
-			Status: proto.Status_Success,
+			Status: proto.Status_success,
 			Data: &proto.RegisterResponse_Data{
 				Username: user.Username,
 			},

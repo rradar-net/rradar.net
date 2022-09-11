@@ -4,7 +4,7 @@ package proto;
 option go_package = "/proto";
 
 enum Status {
-    Success = 0;
-    Fail = 1;
-    Error = 2;
+    success = 0;
+    fail = 1;
+    error = 2;
 }

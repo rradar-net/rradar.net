@@ -1,4 +1,4 @@
-package errors
+package errs
 
 import (
 	"errors"
@@ -42,7 +42,7 @@ func Format(err error) proto.ErrorResponse {
 	if !errors.As(err, &ve) {
 		msg := "invalid input"
 		return proto.ErrorResponse{
-			Status:  proto.Status_Error,
+			Status:  proto.Status_error,
 			Message: &msg,
 		}
 	}
@@ -52,7 +52,7 @@ func Format(err error) proto.ErrorResponse {
 		errs[e.Field()] = e.Translate(trans)
 	}
 	return proto.ErrorResponse{
-		Status: proto.Status_Fail,
+		Status: proto.Status_fail,
 		Data:   errs,
 	}
 }

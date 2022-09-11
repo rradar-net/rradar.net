@@ -66,7 +66,7 @@ func (x *ErrorResponse) GetStatus() Status {
 	if x != nil {
 		return x.Status
 	}
-	return Status_Success
+	return Status_success
 }
 
 func (x *ErrorResponse) GetMessage() string {
