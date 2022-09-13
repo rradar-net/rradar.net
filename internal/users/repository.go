@@ -11,6 +11,7 @@ import (
 type Repository interface {
 	Create(ctx context.Context, user User) (*User, error)
 	IsUsernameAvailable(ctx context.Context, username string) bool
+	IsEmailAvailable(ctx context.Context, email string) bool
 }
 
 type repository struct {
@@ -25,7 +26,7 @@ func (r repository) Create(ctx context.Context, user User) (*User, error) {
 	u, err := r.client.User.Create().
 		SetUsername(user.Username).
 		SetPassword(user.Password).
-		SetEmail(user.Email).Save(ctx)
+		SetNillableEmail(user.Email.Ptr()).Save(ctx)
 
 	if err != nil {
 		return nil, err
@@ -39,6 +40,18 @@ func (r repository) Create(ctx context.Context, user User) (*User, error) {
 func (r repository) IsUsernameAvailable(ctx context.Context, username string) bool {
 	count, err := r.client.User.Query().
 		Where(user.Username(username)).
+		Count(ctx)
+
+	if err != nil {
+		log.Panic().Msg(err.Error())
+	}
+
+	return count == 0
+}
+
+func (r repository) IsEmailAvailable(ctx context.Context, email string) bool {
+	count, err := r.client.User.Query().
+		Where(user.Email(email)).
 		Count(ctx)
 
 	if err != nil {

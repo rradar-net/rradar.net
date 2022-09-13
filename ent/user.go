@@ -21,12 +21,12 @@ type User struct {
 	// Password holds the value of the "password" field.
 	Password string `json:"password,omitempty"`
 	// Email holds the value of the "email" field.
-	Email string `json:"email,omitempty"`
+	Email *string `json:"email,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*User) scanValues(columns []string) ([]interface{}, error) {
-	values := make([]interface{}, len(columns))
+func (*User) scanValues(columns []string) ([]any, error) {
+	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
 		case user.FieldUsername, user.FieldPassword, user.FieldEmail:
@@ -42,7 +42,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the User fields.
-func (u *User) assignValues(columns []string, values []interface{}) error {
+func (u *User) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -70,7 +70,8 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
-				u.Email = value.String
+				u.Email = new(string)
+				*u.Email = value.String
 			}
 		}
 	}
@@ -106,8 +107,10 @@ func (u *User) String() string {
 	builder.WriteString("password=")
 	builder.WriteString(u.Password)
 	builder.WriteString(", ")
-	builder.WriteString("email=")
-	builder.WriteString(u.Email)
+	if v := u.Email; v != nil {
+		builder.WriteString("email=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

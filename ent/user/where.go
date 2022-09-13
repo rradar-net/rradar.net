@@ -32,7 +32,7 @@ func IDNEQ(id uuid.UUID) predicate.User {
 // IDIn applies the In predicate on the ID field.
 func IDIn(ids ...uuid.UUID) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		v := make([]interface{}, len(ids))
+		v := make([]any, len(ids))
 		for i := range v {
 			v[i] = ids[i]
 		}
@@ -43,7 +43,7 @@ func IDIn(ids ...uuid.UUID) predicate.User {
 // IDNotIn applies the NotIn predicate on the ID field.
 func IDNotIn(ids ...uuid.UUID) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		v := make([]interface{}, len(ids))
+		v := make([]any, len(ids))
 		for i := range v {
 			v[i] = ids[i]
 		}
@@ -116,7 +116,7 @@ func UsernameNEQ(v string) predicate.User {
 
 // UsernameIn applies the In predicate on the "username" field.
 func UsernameIn(vs ...string) predicate.User {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -127,7 +127,7 @@ func UsernameIn(vs ...string) predicate.User {
 
 // UsernameNotIn applies the NotIn predicate on the "username" field.
 func UsernameNotIn(vs ...string) predicate.User {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -215,7 +215,7 @@ func PasswordNEQ(v string) predicate.User {
 
 // PasswordIn applies the In predicate on the "password" field.
 func PasswordIn(vs ...string) predicate.User {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -226,7 +226,7 @@ func PasswordIn(vs ...string) predicate.User {
 
 // PasswordNotIn applies the NotIn predicate on the "password" field.
 func PasswordNotIn(vs ...string) predicate.User {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -314,7 +314,7 @@ func EmailNEQ(v string) predicate.User {
 
 // EmailIn applies the In predicate on the "email" field.
 func EmailIn(vs ...string) predicate.User {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
@@ -325,7 +325,7 @@ func EmailIn(vs ...string) predicate.User {
 
 // EmailNotIn applies the NotIn predicate on the "email" field.
 func EmailNotIn(vs ...string) predicate.User {
-	v := make([]interface{}, len(vs))
+	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}

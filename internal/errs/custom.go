@@ -38,12 +38,26 @@ func NewErrInternalServerError() *SentinelError {
 var ErrUsernameIsNotAvailable = errors.New("user already exists")
 
 func NewErrUsernameIsNotAvailable(username string) *SentinelError {
-	msg := fmt.Sprintf("Username %s is not available.", username)
 	return &SentinelError{
 		http.StatusConflict,
 		proto.ErrorResponse{
-			Status:  proto.Status_error,
-			Message: &msg,
+			Status: proto.Status_fail,
+			Data: map[string]string{
+				"username": fmt.Sprintf("Username %s is not available.", username),
+			},
+		},
+		ErrUsernameIsNotAvailable,
+	}
+}
+
+func NewErrEmailIsAlreadyTaken(email string) *SentinelError {
+	return &SentinelError{
+		http.StatusConflict,
+		proto.ErrorResponse{
+			Status: proto.Status_fail,
+			Data: map[string]string{
+				"email": fmt.Sprintf("Email %s is already taken.", email),
+			},
 		},
 		ErrUsernameIsNotAvailable,
 	}

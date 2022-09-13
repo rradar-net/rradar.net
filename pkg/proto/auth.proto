@@ -8,7 +8,7 @@ option go_package = "/proto";
 message RegisterRequest {
     string username = 1; // @gotags: json:"username" binding:"required"
     string password = 2; // @gotags: json:"password" binding:"required,min=8,max=256"
-    optional string email = 3; // @gotags: json:"email"
+    optional string email = 3; // @gotags: json:"email,omitempty" binding:"omitempty,email"
 }
 
 message RegisterResponse {

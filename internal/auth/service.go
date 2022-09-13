@@ -7,6 +7,7 @@ import (
 	"github.com/rradar-net/rradar.net/internal/users"
 	"github.com/rradar-net/rradar.net/pkg/proto"
 	"github.com/rs/zerolog/log"
+	"gopkg.in/guregu/null.v4/zero"
 )
 
 func registerUser(env env.Env, request *proto.RegisterRequest) (*users.User, *errs.SentinelError) {
@@ -16,19 +17,29 @@ func registerUser(env env.Env, request *proto.RegisterRequest) (*users.User, *er
 		return nil, errs.NewErrUsernameIsNotAvailable(request.Username)
 	}
 
+	// Check if email is available
+	email := zero.StringFromPtr(request.Email)
+	emailStr := email.ValueOrZero()
+	if emailStr != "" {
+		available = env.UserRepository.IsEmailAvailable(env.Ctx, emailStr)
+		if !available {
+			return nil, errs.NewErrEmailIsAlreadyTaken(emailStr)
+		}
+	}
+
 	// Hash password
 	hash, err := argon2id.CreateHash(request.Password, argon2id.DefaultParams)
 	if err != nil {
 		log.Error().Msg(err.Error())
 		return nil, errs.NewErrInternalServerError()
 	}
-	request.Password = ""
+	request.Password = "" // throw away the plain password right after hashing
 
 	// Create User entity
 	user := &users.User{
 		Username: request.Username,
 		Password: hash,
-		Email:    proto.OptionalString(request.Email),
+		Email:    email,
 	}
 
 	// Save User to db
@@ -37,6 +48,5 @@ func registerUser(env env.Env, request *proto.RegisterRequest) (*users.User, *er
 		log.Error().Msg(err.Error())
 		return nil, errs.NewErrInternalServerError()
 	}
-
 	return user, nil
 }

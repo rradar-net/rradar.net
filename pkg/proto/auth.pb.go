@@ -27,7 +27,7 @@ type RegisterRequest struct {
 
 	Username string  `protobuf:"bytes,1,opt,name=username,proto3" json:"username" binding:"required"` // @gotags: json:"username" binding:"required"
 	Password string  `protobuf:"bytes,2,opt,name=password,proto3" json:"password" binding:"required,min=8,max=256"` // @gotags: json:"password" binding:"required,min=8,max=256"
-	Email    *string `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email"` // @gotags: json:"email"
+	Email    *string `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty" binding:"omitempty,email"` // @gotags: json:"email,omitempty" binding:"omitempty,email"
 }
 
 func (x *RegisterRequest) Reset() {

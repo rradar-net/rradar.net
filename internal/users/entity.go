@@ -1,17 +1,20 @@
 package users
 
-import "github.com/rradar-net/rradar.net/ent"
+import (
+	"github.com/rradar-net/rradar.net/ent"
+	"gopkg.in/guregu/null.v4/zero"
+)
 
 type User struct {
 	Username string
 	Password string
-	Email    string
+	Email    zero.String
 }
 
 func toUserEntity(u *ent.User) User {
 	return User{
 		Username: u.Username,
 		Password: u.Password,
-		Email:    u.Email,
+		Email:    zero.StringFromPtr(u.Email),
 	}
 }

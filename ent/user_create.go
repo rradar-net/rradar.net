@@ -214,7 +214,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: user.FieldEmail,
 		})
-		_node.Email = value
+		_node.Email = &value
 	}
 	return _node, _spec
 }
