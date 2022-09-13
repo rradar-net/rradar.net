@@ -10,6 +10,25 @@ import (
 	"gopkg.in/guregu/null.v4/zero"
 )
 
+func loginUser(env env.Env, request *proto.LoginRequest) (*users.User, *errs.SentinelError) {
+	user, err := env.UserRepository.GetByUsername(env.Ctx, request.Username)
+	if err != nil {
+		return nil, errs.NewErrUsernameOrEmailNotFound()
+	}
+
+	passwordOk, err := argon2id.ComparePasswordAndHash(request.Password, user.Password)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		return nil, errs.NewErrInternalServerError()
+	}
+
+	if !passwordOk {
+		return nil, errs.NewErrIncorrectPassword()
+	}
+
+	return user, nil
+}
+
 func registerUser(env env.Env, request *proto.RegisterRequest) (*users.User, *errs.SentinelError) {
 	// Check if username is available
 	available := env.UserRepository.IsUsernameAvailable(env.Ctx, request.Username)

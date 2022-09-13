@@ -19,3 +19,8 @@ message RegisterResponse {
     Status status = 1; // @gotags: json:"status"
     Data data = 2;
 }
+
+message LoginRequest {
+    string username = 1; // @gotags: json:"username" binding:"required"
+    string password = 2; // @gotags: json:"password" binding:"required,min=8,max=256"
+}

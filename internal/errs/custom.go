@@ -50,6 +50,8 @@ func NewErrUsernameIsNotAvailable(username string) *SentinelError {
 	}
 }
 
+var ErrEmailIsAlreadyTaken = errors.New("email is already taken")
+
 func NewErrEmailIsAlreadyTaken(email string) *SentinelError {
 	return &SentinelError{
 		http.StatusConflict,
@@ -59,6 +61,36 @@ func NewErrEmailIsAlreadyTaken(email string) *SentinelError {
 				"email": fmt.Sprintf("Email %s is already taken.", email),
 			},
 		},
-		ErrUsernameIsNotAvailable,
+		ErrEmailIsAlreadyTaken,
+	}
+}
+
+var ErrUsernameOrEmailNotFound = errors.New("username or email not found")
+
+func NewErrUsernameOrEmailNotFound() *SentinelError {
+	return &SentinelError{
+		http.StatusNotFound,
+		proto.ErrorResponse{
+			Status: proto.Status_fail,
+			Data: map[string]string{
+				"username": "Couldn't find that username or email.",
+			},
+		},
+		ErrUsernameOrEmailNotFound,
+	}
+}
+
+var ErrIncorrectPassword = errors.New("incorrect password")
+
+func NewErrIncorrectPassword() *SentinelError {
+	return &SentinelError{
+		http.StatusForbidden,
+		proto.ErrorResponse{
+			Status: proto.Status_fail,
+			Data: map[string]string{
+				"password": "Incorrect password.",
+			},
+		},
+		ErrIncorrectPassword,
 	}
 }

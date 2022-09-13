@@ -11,7 +11,25 @@ import (
 
 func LoginHandler(env env.Env) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var request proto.LoginRequest
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(http.StatusBadRequest, errs.Format(err))
+			return
+		}
 
+		user, err := loginUser(env, &request)
+
+		if err != nil {
+			c.JSON(err.HttpStatus, err.JSON())
+			return
+		}
+
+		c.JSON(http.StatusCreated, &proto.RegisterResponse{
+			Status: proto.Status_success,
+			Data: &proto.RegisterResponse_Data{
+				Username: user.Username,
+			},
+		})
 	}
 }
 

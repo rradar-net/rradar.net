@@ -10,6 +10,7 @@ import (
 
 type Repository interface {
 	Create(ctx context.Context, user User) (*User, error)
+	GetByUsername(ctx context.Context, username string) (*User, error)
 	IsUsernameAvailable(ctx context.Context, username string) bool
 	IsEmailAvailable(ctx context.Context, email string) bool
 }
@@ -59,4 +60,18 @@ func (r repository) IsEmailAvailable(ctx context.Context, email string) bool {
 	}
 
 	return count == 0
+}
+
+func (r repository) GetByUsername(ctx context.Context, username string) (*User, error) {
+	user, err := r.client.User.Query().
+		Where(user.Username(username)).
+		First(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	entity := toUserEntity(user)
+
+	return &entity, nil
 }
