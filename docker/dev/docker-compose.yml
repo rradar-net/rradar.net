@@ -1,5 +1,13 @@
 version: "3.9"
 services:
+  go:
+    build:
+      context: ../../
+      dockerfile: docker/dev/Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - ../../:/app
   postgres:
     image: "postgres:latest"
     environment:

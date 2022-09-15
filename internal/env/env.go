@@ -18,7 +18,7 @@ type Env struct {
 }
 
 type privateConfig struct {
-	DbHost     string `default:"localhost" split_words:"true"`
+	DbHost     string `default:"postgres" split_words:"true"`
 	DbUser     string `default:"postgres" split_words:"true"`
 	DbPassword string `default:"superuser" split_words:"true"`
 	DbName     string `default:"rradar" split_words:"true"`
