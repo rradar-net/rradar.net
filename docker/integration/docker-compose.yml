@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  go:
+    build:
+      context: ../../
+      dockerfile: docker/dev/Dockerfile
+    command: go run main.go
+    volumes:
+      - ../../:/app
+  postgres:
+    image: "postgres:latest"
+    container_name: rradar-integration-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=superuser
+      - POSTGRES_DB=rradar
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  runner:
+    build:
+      context: ../../
+      dockerfile: docker/dev/Dockerfile
+    command: ./scripts/wait-for-it.sh go:8080 -- go test -v ./it
+    volumes:
+      - ../../:/app
+    depends_on:
+      - "go"
+      - "postgres"
+
+volumes:
+  pgdata:
